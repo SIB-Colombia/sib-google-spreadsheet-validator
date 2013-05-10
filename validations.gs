@@ -30,24 +30,6 @@ function valControlledVocabulary(cellToVal, vocType){
   return val;
 };
 
-/*
-
-function test(){
-  var tst1 ="hola";
-  var tst2 =" hola";
-  var tst3 ="hola ";
-  var tst4=" hola ";
-  Browser.msgBox(tst2[0]==" ");
-  Browser.msgBox(tst2[0]==' ');
-  Browser.msgBox(tst2.substring(1));
-  Browser.msgBox(tst3[tst3.length-1]);
-  Browser.msgBox(tst3.substring(0,tst3.length-1));
-  Browser.msgBox(tst3[tst3.length-1]==' ');
-
-}
-*/
-
-
 function valContentVocabulary(cellToVal, vocType){
   var val=false;
   var ln1=vocType.length;
