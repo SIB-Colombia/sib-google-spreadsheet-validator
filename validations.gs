@@ -10,9 +10,50 @@
 function valControlledVocabulary(cellToVal, vocType){
   var val=false;
   var ln1=vocType.length;
-  if(cellToVal!=""){
+  if(cellToVal[0]==' '){
+    cellToVal=cellToVal.substring(1);
+  }
+  
+  if(cellToVal[cellToVal.length-1]==' '){
+    cellToVal=cellToVal.substring(0,cellToVal.length-1);
+  }
+  if(cellToVal!==""){
     for (var j=0;j<ln1;j++){
       if (cellToVal==vocType[j]){
+        val=true;
+        break;
+      }
+    }
+  }else{
+  val=true;
+  }
+  return val;
+};
+
+/*
+
+function test(){
+  var tst1 ="hola";
+  var tst2 =" hola";
+  var tst3 ="hola ";
+  var tst4=" hola ";
+  Browser.msgBox(tst2[0]==" ");
+  Browser.msgBox(tst2[0]==' ');
+  Browser.msgBox(tst2.substring(1));
+  Browser.msgBox(tst3[tst3.length-1]);
+  Browser.msgBox(tst3.substring(0,tst3.length-1));
+  Browser.msgBox(tst3[tst3.length-1]==' ');
+
+}
+*/
+
+
+function valContentVocabulary(cellToVal, vocType){
+  var val=false;
+  var ln1=vocType.length;
+  if(cellToVal!=""){
+    for (var j=0;j<ln1;j++){
+      if (cellToVal.toLowerCase().indexOf(vocType[j])!=-1){
         val=true;
         break;
       }
@@ -244,11 +285,11 @@ function validateScientificName(cellToVal){
 function validateHour(cellToVal){
   var regHour=/^(2[0-3]|[01][0-9])(:([0-5][0-9])(:([0-5][0-9]))?)?(Z|[+-](?:2[0-3]|[01][0-9])(?::?(?:[0-5][0-9]))?)?$/;
   var vald=true;
-  if(cellToVal!=""){
+  //if(cellToVal!=""){
     if(cellToVal.search(regHour)==-1){
       vald=false;
     }
-  }
+  //}
   return vald;
 };
 
@@ -263,7 +304,10 @@ function validateLocation(cellToVal, location){
   return vald;
 };
 
+
+/*
 function getCrd(localization){
+ var lgSel=parseInt(ScriptProperties.getProperty('lgSel'));  
  var result=Maps.newGeocoder().geocode(localization);
  var lng="";
  var lat="";
@@ -273,9 +317,36 @@ function getCrd(localization){
     lat=result.results[0].geometry.location.lat;
     return (lat+";"+lng);
   }else{
-    return message11;
+    return message11[lgSel];
   }
  
+};
+*/
+
+function getCrd(localization){
+  var url1='http://open.mapquestapi.com/nominatim/v1/search?format=json&limit=1&q=' + localization;
+  var lng="";
+  var lat="";
+  try {
+    var response = UrlFetchApp.fetch(url1, {method:'get'});
+  } catch(e) {
+    Logger.log(e);
+  }
+  
+  if (response && response.getResponseCode() == 200) {
+      Logger.log(response.getResponseCode());
+      var jsObj=Utilities.jsonParse(response.getContentText());
+      try {
+        lng=jsObj[0].lon;
+        lat=jsObj[0].lat;
+        } catch(e) {
+          lng="";
+          lat="";
+        }
+    }else {
+      Logger.log('The geocoder service being used may be offline.');
+    }
+  return (lat+";"+lng);
 };
 
 
@@ -308,6 +379,7 @@ function validateScientificNameAuthorship(cellToVal){
   return vald;
 };
 
+/*
 function getLocation(latDc,lonDc){
   var urlp1="http://maps.googleapis.com/maps/api/geocode/json?latlng=";
   var urlp2="&sensor=true&language=es-419";
@@ -316,6 +388,31 @@ function getLocation(latDc,lonDc){
   var geoJSON = eval( '(' + JSON_response + ')' );
   var locationS=JSON.stringify(geoJSON);
   return locationS;
+};
+*/
+
+function getLocation(latDc,lonDc){
+  var url1='http://open.mapquestapi.com/nominatim/v1/search?format=json&limit=1&q=' + latDc+","+lonDc;
+  var location="";
+  try {
+    var response = UrlFetchApp.fetch(url1, {method:'get'});
+  } catch(e) {
+    Logger.log(e);
+  }
+  
+  if (response && response.getResponseCode() == 200) {
+      Logger.log(response.getResponseCode());
+      var jsObj=Utilities.jsonParse(response.getContentText());
+      //Browser.msgBox(jsObj[0].display_name);
+      try {
+        location=jsObj[0].display_name;
+        } catch(e) {
+          location="";
+        }
+    }else {
+      Logger.log('The geocoder service being used may be offline.');
+    }
+  return location;
 };
 
 //3
@@ -738,3 +835,59 @@ function partitions(type, datISO){
   
   return parts;
 };  
+
+/*
+function scientificNameCatOfLife(specie){
+  var vald=true;
+  var text ="";
+  Utilities.sleep(1 * 500);
+  var text = UrlFetchApp.fetch("http://www.catalogueoflife.org/col/webservice?name="+specie).getContentText();
+  var doc = Xml.parse(text);
+  var nameE=doc.getElement().getName().getLocalName();
+  var atrError=doc.getElement().getAttribute("error_message");
+  var results=doc.getElement().getElements();
+  //Browser.msgBox(specie+" "+atrError.getValue()+" "+atrError.getValue().length);
+  if(atrError.getValue().length==0){
+    var names=new Array();
+    for(var i=0; i<results.length;i++){
+      names.push(results[i].getElement("name").getText());
+    }
+      var acceptNames=doc.getElement().getElements('accepted_name');
+      if(acceptNames.length>0){
+        vernacularName=true;
+      }
+  }else{
+    vald=false;
+  }
+  return vald;
+};
+
+*/
+
+function validateSpecificEpithet(epithet, scientificName){
+  var vald=true;
+  var wrds=scientificName.split(" ");
+  if(wrds.length>1){ 
+   if(wrds[1]!=epithet){
+     vald=false;
+   }
+  }else{
+    vald=false;
+  }
+  return vald;
+};
+
+function validateIntHour(intHour){
+  var vald=true;
+  if(intHour!=""){
+    var hrs=intHour.split('/');
+    if(hrs.length==1){
+      vald=validateHour(hrs[0]);
+    }else if(hrs.length==2){
+      if(!(validateHour(hrs[0])&&validateHour(hrs[1]))){
+        vald=false;
+      }
+    }
+  }
+  return vald;
+};

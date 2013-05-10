@@ -17,7 +17,7 @@ function fillSheetCV() {
     sheetCV.clear();
   }
   
-  var fields=[type[lgSel], basisOfRecord[lgSel], sex[lgSel], waterBody[lgSel], country[lgSel], stateProvince[lgSel], county[lgSel], kingdom[lgSel], phylum[lgSel], class[lgSel], order[lgSel], family[lgSel], genus[lgSel], subgenus[lgSel]];
+  var fields=[type[lgSel], basisOfRecord[lgSel], sex[lgSel], country[lgSel], stateProvince[lgSel], county[lgSel], kingdom[lgSel], phylum[lgSel], class[lgSel], order[lgSel], family[lgSel], genus[lgSel], subgenus[lgSel], waterBody[lgSel]];
   
   var fieldsR=sheetCV.getRange(1, 1, 1, fields.length);
   for(var f=0;f<fields.length;f++){
@@ -45,12 +45,8 @@ function fillSheetCV() {
   
   //Sexo
   //controlled vocabulary
-  cVocabulary[sex[lgSel]]=sexVc[sex[lgSel]]
-  
-  //Cuerpo de Agua
-  //controlled vocabulary
-  cVocabulary[waterBody[lgSel]]=["Lago de Tota", "Lago Chingaza", "Embalse del Neusa"];
-  
+  cVocabulary[sex[lgSel]]=sexVc[sex[lgSel]];
+   
   //País
   //controlled vocabulary
   cVocabulary[country[lgSel]]=["Colombia", "Perú", "Argentina", "Bolivia", "Chile"];
@@ -90,6 +86,10 @@ function fillSheetCV() {
   //Subgénero
   //controlled vocabulary
   cVocabulary[subgenus[lgSel]]=["Canis lupus", "Felis catus"];
+  
+  //Cuerpo de Agua
+  //controlled vocabulary
+  cVocabulary[waterBody[lgSel]]=waterBodyVc[waterBody[lgSel]];
   
   //for the elements in array cVocabulary
   for(var l in cVocabulary){
@@ -157,7 +157,13 @@ function clearSheet(){
   var numcol=rangeData.getNumColumns();
   var rangeCL=sheetDnC.getRange(2, 1, numrow-1, numcol);
   rangeCL.setBackgroundColor("white");
-  ScriptProperties.setProperty('isValidate', '0');
+  //ScriptProperties.setProperty('isValidate', '0');
+  
+  ScriptProperties.setProperty('isValidateTaxon', '0');
+  ScriptProperties.setProperty('isValidateLocId', '0');
+  ScriptProperties.setProperty('isValidateEvent', '0');
+  ScriptProperties.setProperty('isValidateRegBio', '0');
+  ScriptProperties.setProperty('isValidateRegEl', '0');
 };
 
 function trim(valueC){
@@ -185,6 +191,7 @@ function showErrors(countE){
       fieldsE.getCell(1,kl+2).setValue(tValidation[lgSel][kl]);
       fieldsE.getCell(1,kl+2).setFontWeight("bold");
     }
+    //Browser.msgBox("lms");
     for(var t in countE){
       if(countE.hasOwnProperty(t)){
       fieldsE.getCell(columnE, 1).setValue(t);  
