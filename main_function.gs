@@ -2283,7 +2283,7 @@ function validateCoordenates(){
       }
     }
     for(var k=0;k<rangeECoord.length;k++){
-      rangeECoord[k].setBackgroundColor("#1F78D7");
+      rangeECoord[k].setBackgroundColor("#CC6699");
     }
     if(noService){
       Browser.msgBox("No service");
@@ -2365,7 +2365,7 @@ function validateLoc(){
       }
     }
     for(var k=0;k<rangeEGeo.length;k++){
-      rangeEGeo[k].setBackgroundColor("#1F78D7"); //1F78D7 CC6699
+      rangeEGeo[k].setBackgroundColor("#CC6699"); //1F78D7 CC6699
     }
     if(noService){
       Browser.msgBox("No service");
